@@ -1,4 +1,4 @@
-\documentclass{tufte-handout}
+\documentclass[nobib]{tufte-handout}
 
 \title{nbinteract: Generate Interactive Webpages From Jupyter Notebooks}
 
@@ -7,6 +7,12 @@
 %\date{28 March 2010} % without \date command, current date is supplied
 
 %\geometry{showframe} % display margins for debugging page layout
+
+\usepackage[
+  style=numeric,
+  citestyle=numeric
+]{biblatex}
+\addbibresource{thesis.bib}
 
 \usepackage{graphicx} % allow embedded images
   \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
@@ -29,6 +35,9 @@
 \newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
 \newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
 
+% Used for inline code snippets.
+\newcommand{\code}[1]{\texttt{#1}}
+
 \begin{document}
 
 \maketitle% this prints the handout title, author, and date
@@ -41,14 +50,37 @@ This is the abstract. It will be filled in after everything else is written.
 \section{Introduction} % (fold)
 \label{sec:introduction}
 
-Hi
+Jupyter notebooks provide a popular document format for authoring, executing,
+and publishing code alongside analysis \cite{Kluyver2016b}. Although Jupyter
+notebooks were originally designed for use in scientific workflows for data
+preparation and analysis, they are becoming an increasingly common choice for
+university courses---a survey in 2016 reported that over one hundred courses
+across multiple countries use Jupyter in their course content
+\cite{Hamrick2016}.
+
+An increasing number of universities now offer data science courses, many of
+which use Jupyter because of its broad adoption for data analysis workflows in
+both academia and industry. These courses often use Jupyter notebooks as the
+preferred medium for homeworks, labs, projects, and lectures. UC Berkeley's
+flagship data science courses, for example, use Jupyter for all of these course
+components and even use Jupyter notebooks for their course textbooks.
+
+As a web technology, Jupyter notebooks also provide a platform for interaction
+authoring. For example, the popular \code{ipywidgets} Python library allows
+users to create web-based user interfaces to interact with arbitrary Python
+functions. Users can create these interfaces using Python directly in the
+notebook environment instead of having to use HTML and Javascript,
+significantly lowering the overhead usually needed to create these interfaces.
+This ease-of-use encourages instructors and researchers to create interactive
+explanations of their work.
+
+Since \code{ipywidgets} is a Jupyter notebook library, however, in order to
+view these interactive explanations users have to run the notebook itself.
 
 % section introduction (end)
 
+\newpage
 
-\bibliography{thesis}
-\bibliographystyle{plainnat}
-
-
+\printbibliography
 
 \end{document}
