@@ -1,6 +1,6 @@
 \documentclass[nobib]{tufte-handout}
 
-\title{nbinteract: Generate Interactive Webpages From Jupyter Notebooks}
+\title{nbinteract: Generate Interactive Web Pages From Jupyter Notebooks}
 
 \author[Samuel Lau]{Samuel Lau}
 
@@ -44,40 +44,120 @@
 
 \begin{abstract}
 \noindent
-This is the abstract. It will be filled in after everything else is written.
+Abstract:
 \end{abstract}
 
 \section{Introduction} % (fold)
 \label{sec:introduction}
 
 Jupyter notebooks provide a popular document format for authoring, executing,
-and publishing code alongside analysis \cite{Kluyver2016b}. Although Jupyter
-notebooks were originally designed for use in scientific workflows for data
-preparation and analysis, they are becoming an increasingly common choice for
-university courses---a survey in 2016 reported that over one hundred courses
-across multiple countries use Jupyter in their course content
-\cite{Hamrick2016}.
+and publishing code alongside analysis \cite{thomas_jupyter_2016}. Although
+Jupyter notebooks were originally designed for use in scientific workflows for
+data preparation and analysis, they are becoming an increasingly common choice
+for university courses---a survey in 2016 reported that over one hundred
+courses across multiple countries use Jupyter in their course content
+\cite{hamrick_2016_2016}.
 
 An increasing number of universities now offer data science courses, many of
 which use Jupyter because of its broad adoption for data analysis workflows in
 both academia and industry. These courses often use Jupyter notebooks as the
 preferred medium for homeworks, labs, projects, and lectures. UC Berkeley's
 flagship data science courses, for example, use Jupyter for all of these course
-components and even use Jupyter notebooks for their course textbooks.
+components and have even writen their course textbooks in Jupyter notebooks.
 
 As a web technology, Jupyter notebooks also provide a platform for interaction
 authoring. For example, the popular \code{ipywidgets} Python library allows
 users to create web-based user interfaces to interact with arbitrary Python
 functions. Users can create these interfaces using Python directly in the
 notebook environment instead of having to use HTML and Javascript,
-significantly lowering the overhead usually needed to create these interfaces.
-This ease-of-use encourages instructors and researchers to create interactive
-explanations of their work.
+significantly lowering the overhead usually needed to create these interfaces
+\cite{_jupyter-widgets/ipywidgets_}. This ease-of-use encourages instructors
+and researchers to create interactive explanations of their work.
 
-Since \code{ipywidgets} is a Jupyter notebook library, however, in order to
-view these interactive explanations users have to run the notebook itself.
+Unfortunately, it is difficult to share these interactive notebooks with a
+broad audience. Sharing the notebook file itself retains full interactivity but
+requires viewers to have Jupyter, Python, and all other packages used in the
+notebook installed on their own machines. The freely available Binder service
+circumvents this by hosting notebook servers that come pre-packaged with
+necessary software. However, both of these options still require viewers to
+have prior familiarity with the Jupyter environment, making them less suitable
+for use with non-technical viewers. Authors can convert a Jupyter notebook to a
+static HTML document and host the document as a publicly-accessible web page.
+However, this method does not preserve the interactive elements of the
+notebook; the resulting web page only contains text and images.
+
+\code{nbinteract} is a Python package that allows authors to convert Jupyter
+notebooks into interactive HTML pages. The interactive elements can use
+arbitrary Python code to generate output, including Python libraries that use C
+extensions (e.g. \code{numpy} and \code{pandas}) and libraries that create
+images (e.g. \code{matplotlib}). The resulting web pages can be used by anyone
+with a modern web browser even if the viewer does not have Python or Jupyter
+installed on their computer. The \code{nbinteract} package also includes
+specialized methods for interactive plots designed for fast interaction
+prototyping in the notebook and smooth interaction on static HTML web pages.
+We discuss the design of the package, its features and limitations, and its
+implications for interaction authoring and sharing.
 
 % section introduction (end)
+
+\section{Related Work} % (fold)
+\label{sec:related_work}
+
+\subsection{Jupyter Technologies} % (fold)
+\label{sub:jupyter_technologies}
+
+The Jupyter notebook platform allows authoring and editing code, images, and
+written explanations together in a single document composed of multiple cells.
+The platform is composed of two main components. It includes a frontend---a
+web-based authoring environment that users open in their web browsers. The
+frontend connects to a Jupyter kernel, a process on the users' computers that
+runs code and returns the output to the frontend to display
+\cite{thomas_jupyter_2016}.
+
+The \code{ipywidgets} library makes use of Jupyter's web-based frontend to
+create interactive elements directly in the notebook. The library includes
+Python functions that produce HTML and Javascript when called to create
+widgets. When a user interacts with a widget---selecting an option from a
+dropdown menu, for example---the \code{ipywidgets} library executes
+user-defined Python functions on the Jupyter kernel and renders the result in
+the cell \cite{_jupyter-widgets/ipywidgets_}. A number of other specialized
+libraries are built on top of \code{ipywidgets}, such as the interactive
+plotting library \code{bqplot} \cite{_bqplot_2018} and the molecular
+visualization library \code{nglview} \cite{_arose/nglview_}.
+
+Jupyter notebooks use the \code{nbconvert} tool to convert between notebook
+formats. \code{nbconvert} also allows notebooks to be converted to static HTML
+pages \cite{_jupyter/nbconvert_}. However, these pages do not retain widget
+functionality because they do not have access to a Jupyter kernel by default.
+
+The Binder project hosts ephemeral Jupyter notebook servers as a free service
+for the general public. It takes a repository of Jupyter notebooks, starts a
+Jupyter frontend and Jupyter kernel, and gives users the ability to run the
+notebook over the internet instead of having on their local machines
+\cite{_binder_}.
+
+% subsection jupyter_technologies (end)
+
+\subsection{Interaction Authoring in Javascript} % (fold)
+\label{sub:interaction_authoring_in_javascript}
+
+Javascript is the most commonly used language to design interactions that run
+in a web browser. Because most modern web browsers run Javascript natively,
+viewers do not have to install additional software in order to make use of
+these interactive elements, a key advantage of the language. A number of
+authors use Javascript to create interactive articles
+\cite{_explorable_,kunin_seeing_} and textbooks \cite{stark_sticigui_2004}.
+
+There are a number of Javascript libraries that provide higher level
+abstractions for interaction creation such as D3 and Tangle
+\cite{bostock_d$3$_2011,bret_tangle_2018}. Fundamentally, Javascript libraries
+require fluency with aspects of web programming such as Javascript syntax and
+the document-object model. This additional requirement makes Javascript more
+difficult to use for many data scientists; most data science analysis uses
+Python and R.
+% subsection interaction_authoring_in_javascript (end)
+
+% section related_work (end)
 
 \newpage
 
