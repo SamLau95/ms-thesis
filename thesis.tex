@@ -70,20 +70,20 @@ An increasing number of universities now offer data science courses, many of
 which use Jupyter because of its broad adoption for data analysis workflows in
 both academia and industry. These courses often use Jupyter notebooks as the
 preferred medium for homeworks, labs, projects, and lectures. UC Berkeley's
-flagship data science courses, for example, use Jupyter for all of these course
-components and have even writen their course textbooks in Jupyter notebooks.
+flagship data science courses serve thousands of students every year and use
+Jupyter for all of these course components.
 
 As a web technology, Jupyter notebooks also provide a platform for interaction
 authoring. For example, the popular \code{ipywidgets} Python library allows
 users to create web-based user interfaces to interact with arbitrary Python
 functions. Users can create these interfaces using Python directly in the
 notebook environment instead of having to use HTML and JavaScript,
-significantly lowering the overhead usually needed to create these interfaces
+significantly lowering the time usually needed to create these interfaces
 \cite{_jupyter-widgets/ipywidgets_}. This ease-of-use encourages instructors
 and researchers to create interactive explanations of their work.
 
-Unfortunately, it is difficult to share these interactive notebooks with a
-broad audience. Sharing the notebook file itself retains full interactivity but
+Unfortunately, it is difficult to share these interactive notebooks with the
+public. Sharing the notebook file itself retains full interactivity but
 requires viewers to have Jupyter, Python, and all other packages used in the
 notebook installed on their own machines. The freely available Binder service
 circumvents this by hosting notebook servers that come pre-packaged with
@@ -114,17 +114,17 @@ and its implications for interaction authoring and sharing.
 \subsection{Jupyter Technologies} % (fold)
 \label{sub:jupyter_technologies}
 
-The Jupyter notebook platform allows authoring and editing code, images, and
-written explanations together in a single document composed of multiple cells.
-The platform is composed of two main components. It includes a frontend---a
-web-based authoring environment that users open in their web browsers. The
-frontend connects to a Jupyter kernel, a process on the users' computers that
-runs code and returns the output to the frontend to display
+The Jupyter notebook platform provides an environment to author code, images,
+and written explanations together in a single document composed of multiple
+cells. The platform is composed of two main components. It includes a
+frontend---a web-based authoring environment that users open in their web
+browsers. The frontend connects to a Jupyter kernel, a process on the users'
+computers that runs code and returns the output to the frontend to display
 \cite{thomas_jupyter_2016}.
 
 The \code{ipywidgets} library makes use of Jupyter's web-based frontend to
 create interactive elements directly in the notebook. The library includes
-Python functions that produce HTML and JavaScript when called to create
+Python functions that produce HTML and JavaScript to display interactive
 widgets. When a user interacts with a widget---selecting an option from a
 dropdown menu, for example---the \code{ipywidgets} library executes
 user-defined Python functions on the Jupyter kernel and renders the result in
@@ -158,11 +158,20 @@ authors use JavaScript to create interactive articles
 
 There are a number of JavaScript libraries that provide higher level
 abstractions for interaction creation such as D3 and Tangle
-\cite{bostock_d$3$_2011,bret_tangle_2018}. Fundamentally, JavaScript libraries
-require fluency with aspects of web programming such as JavaScript syntax and
-the document-object model. This additional requirement makes JavaScript more
-difficult to use for many data scientists; most data science analysis uses
-Python and R rather than JavaScript.
+\cite{bostock_d$3$_2011,bret_tangle_2018}. Fundamentally, most JavaScript
+libraries require fluency with aspects of web programming such as JavaScript
+syntax and the document-object model. This additional requirement makes
+JavaScript more difficult to use for many data scientists; most data science
+analysis uses Python and R rather than JavaScript.
+
+The Vega project provides a promising alternative to directly using Javascript
+for interaction data visualizations. By defining a grammar of visualization and
+interaction, Vega and its ecosystem of projects allow users to declaratively
+generate plots that support filtering, panning and zooming. Since Vega
+prespecifies available interaction types, however, it does not allow arbitrary
+user-defined code to run in response to interaction
+\cite{satyanarayan_reactive_2016}.
+
 % subsection interaction_authoring_in_javascript (end)
 
 % section related_work (end)
@@ -317,8 +326,8 @@ dynamic elements.
 
 The JavaScript library for \code{nbinteract} called \code{nbinteract-core} is
 publicly available on the JavaScript package
-registry\sidenote{\url{https://www.npmjs.com/}} but is not designed for general
-use. As such it is not documented on the \code{nbinteract} website.
+registry\sidenote{\url{https://www.npmjs.com/}} but is neither designed for
+general use nor documented on the \code{nbinteract} website.
 \code{nbinteract-core} combines three existing APIs in order to enable widget
 rendering for static HTML pages: the Binder Web API, the JupyterLab Services
 JavaScript API, and the \code{ipywidgets} JavaScript API.
@@ -351,10 +360,9 @@ with the widgets will generate new output.
 library to implement function-driven interfaces to interactive plotting. The
 \code{nbinteract} plotting methods use \code{ipywidgets} to generate and
 display widgets, inferring the widget type as needed. When a user interacts
-with a widget, a Python callback updates the visualization without a
-full rerender from scratch. This lowers visualization update time by a factor
-of roughly two compared to using \code{ipywidgets} alone to render static
-images.
+with a widget, a Python callback updates the visualization without a complete
+rerender. This noticeably lowers visualization update time compared to using
+\code{ipywidgets} alone to render static images.
 
 % subsection interactive_plotting_implementation (end)
 
@@ -366,21 +374,93 @@ images.
 \subsection{Use Cases} % (fold)
 \label{sub:use_cases}
 
-\code{nbinteract} is designed to be most useful to authors that already use
-the Python programming language in Jupyter notebooks. For example, since the
-textbook a UC Berkeley data science course is written using Jupyter notebooks
-and the Python language, it was relatively simple to augment existing
-visualizations with interactivity.
+Because \code{nbinteract} is designed for use with the Python programming
+language in Jupyter notebooks, it provides the most utility for users with
+prior familiarity with Python and Jupyter. These users include course staff for
+computer science or data science courses, students in these courses, and online
+blog authors that use Jupyter notebooks for written content. \code{nbinteract}
+can also be used to create dashboards from Jupyter notebooks by hiding the
+code used to generate widgets. Since Jupyter notebooks converted to HTML are an
+increasingly popular format for online content\sidenote{The first detection of
+gravitational waves and Peter Norvig's pytudes are recent high-profile examples
+of notebooks used as online content formats.}, we've designed \code{nbinteract}
+to easily fit into existing notebook publishing workflows.
+
+UC Berkeley's upper division data science course Data 100 uses
+\code{nbinteract} to build its online textbook\sidenote{
+\url{https://www.textbook.ds100.org/}}. The textbook is written using Jupyter
+notebooks and receives a few hundred views per day. \code{nbinteract} allows
+the authors to include interactive widgets anywhere in the textbook. For
+example, the book uses widgets to display complete views of large data tables
+that would normally require truncation by allowing viewers to scrub through
+the rows and columns of the data table. The book also allows viewers to
+interactively change parameters and data of statistical models and displays
+updated visualizations in response.
 
 % subsection use_cases (end)
 
 \subsection{Comparison with JavaScript} % (fold)
 \label{sub:comparison_with_javascript}
 
+Compared to JavaScript, \code{nbinteract} gives authors lower flexibility and
+fidelity in exchange for easier interaction creation.
+
+Since web browsers run JavaScript natively, JavaScript users have almost
+complete control over every element of the interaction, including the visual
+appearance of interactive elements and animations. \code{nbinteract}, however,
+limits interactions to the widgets supported by the \code{ipywidgets} and
+\code{bqplot} libraries.
+
+Compared to \code{nbinteract}, JavaScript-based interactions will typically
+have a lower startup time and a lower latency between user interaction and
+visual change. In order to display an interactive element for the first time,
+\code{nbinteract} requests a Jupyter server from the Binder service. This
+initial request adds 5-10 seconds to the initial startup time. On user
+interaction, \code{nbinteract} runs Python code on a remote Jupyter kernel,
+incurring overhead from network latency in addition to the time it takes the
+kernel to run the Python code. Typically, interactions can be structured in a
+way to minimize code execution time when widgets are manipulated, making
+network latency the most significant overhead for user interaction. On fast
+connections, this latency is typically around 100 milliseconds.
+JavaScript-based interactions, however, typically do not make requests to a
+remote server and thus do not incur network latency overhead.
+
+Interactions that both \code{nbinteract} and JavaScript support are typically
+easier to create in \code{nbinteract} than in JavaScript. Authors fluent in
+Python can often write interactions with an order-of-magnitude fewer lines of
+code in \code{nbinteract} than authors fluent in JavaScript. The simplicity of
+\code{nbinteract} makes it attractive for authors already knowledgable in
+Python but not JavaScript and HTML.
+
 % subsection comparison_with_javascript (end)
 
 \subsection{Future Work} % (fold)
 \label{sub:future_work}
+
+Although \code{nbinteract} is not designed to fully replicate the flexibility
+and fidelity of JavaScript, we hope to make several improvements to the library
+in order to increase utility for authors that use Jupyter notebooks.
+
+We plan to release a more flexible API for creating interactive visualizations
+using \code{nbinteract}. Currently, visualizations are restricted to single
+plots that contain one type of mark (e.g. line, point, or bar). Our future API
+will provide a declarative syntax for connecting multiple widgets, functions,
+and plot elements to create more complex interactive visualizations.
+
+Currently, \code{nbinteract} only permits widgets from the \code{ipywidgets}
+and \code{bqplot} libraries. Since there are now many libraries built on top of
+the \code{ipywidgets} library\sidenote{Any of the widget libraries listed at
+\url{http://jupyter.org/widgets}, for example.}, we plan to allow authors to
+specify additional widget libraries when converting notebooks. This improvement
+will allow \code{nbinteract} to support the entire ecosystem of interaction
+frameworks that use \code{ipywidgets}.
+
+We also plan to work with the Binder team to decrease the startup time of
+Jupyter servers on Binder. This improvement would benefit both
+\code{nbinteract} users and any user of the Binder service itself. We are also
+investigating ways to reduce latency after widget initialization, including
+caching previous interaction outputs on the client and batching visualization
+updates together.
 
 % subsection future_work (end)
 
@@ -388,6 +468,12 @@ visualizations with interactivity.
 
 \section{Conclusion} % (fold)
 \label{sec:conclusion}
+
+\code{nbinteract} combines recently developed projects in the Jupyter ecosystem
+to allow authors to create interactive explanations and visualizations directly
+in the Jupyter notebook environment. The library aims to use the broad adoption
+of Python and Jupyter to allow many more individuals to create and share
+interactive content online.
 
 % section conclusion (end)
 
