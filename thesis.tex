@@ -17,6 +17,12 @@
 ]{biblatex}
 \addbibresource{thesis.bib}
 
+% Adjust dimensions a bit
+\geometry{
+  left=0.8in,
+  textwidth=28pc
+}
+
 \usepackage{graphicx} % allow embedded images
   \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
   \graphicspath{{graphics/}} % set of paths to search for images
@@ -94,16 +100,16 @@ courses across multiple countries use Jupyter in their course content
 An increasing number of universities now offer data science courses, many of
 which use Jupyter because of its broad adoption for data analysis workflows in
 both academia and industry. These courses often use Jupyter notebooks as the
-preferred medium for homeworks, labs, projects, and lectures. UC Berkeley's
-flagship data science courses serve thousands of students every year and use
-Jupyter for all of these course components.
+preferred medium for homeworks, labs, projects, and lectures. As a prominent
+example, UC Berkeley's flagship data science courses serve thousands of
+students every year and use Jupyter for all of their course components.
 
 As a web technology, Jupyter notebooks also provide a platform for interaction
 authoring. For example, the popular \code{ipywidgets} Python library allows
 users to create web-based user interfaces to interact with arbitrary Python
 functions. Users can create these interfaces using Python directly in the
 notebook environment instead of having to use HTML and JavaScript,
-significantly lowering the time usually needed to create these interfaces
+significantly lowering the time typically needed to create these interfaces
 \cite{_jupyter-widgets/ipywidgets_}. This ease-of-use encourages instructors
 and researchers to create interactive explanations of their work.
 
@@ -135,8 +141,9 @@ anyone with a modern web browser even if the viewer does not have Python or
 Jupyter installed on their computer. The \code{nbinteract} package also
 includes specialized methods for interactive plots designed for fast
 interaction prototyping in the notebook and smooth interaction on static HTML
-web pages. We discuss the design of the package, its features and limitations,
-and its implications for interaction authoring and sharing.
+web pages. We discuss the package's features and design, its advantages and
+limitations compared to JavaScript, and its implications for interaction
+authoring and sharing.
 
 % section introduction (end)
 
@@ -194,21 +201,21 @@ these interactive elements, a key advantage of the language. A number of
 authors use JavaScript to create interactive articles
 \cite{_explorable_,kunin_seeing_} and textbooks \cite{stark_sticigui_2004}.
 
-There are a number of JavaScript libraries that provide higher level
-abstractions for interaction creation such as D3 and Tangle
+A number of JavaScript libraries provide higher level abstractions for
+interaction creation, including D3 and Tangle
 \cite{bostock_d$3$_2011,bret_tangle_2018}. Fundamentally, most JavaScript
 libraries require fluency with aspects of web programming such as JavaScript
 syntax and the document-object model. This additional requirement makes
 JavaScript more difficult to use for many data scientists; most data science
-analysis uses Python and R rather than JavaScript.
+analysis uses Python and R rather than JavaScript \cite{_most_}.
 
 The Vega project provides a promising alternative to directly using Javascript
 for interaction data visualizations. By defining a grammar of visualization and
-interaction, Vega and its ecosystem of projects allow users to declaratively
-generate plots that support filtering, panning and zooming. Since Vega
-prespecifies available interaction types, however, it does not allow arbitrary
-user-defined code to run in response to interaction
-\cite{satyanarayan_reactive_2016}.
+interaction using JavaScript Object Notation, Vega and its ecosystem of
+projects allow users to declaratively generate plots that support filtering,
+panning and zooming. Since Vega prespecifies available interaction types,
+however, it does not allow arbitrary user-defined code to run in response to
+interaction \cite{satyanarayan_reactive_2016}.
 
 % subsection interaction_authoring_in_javascript (end)
 
@@ -217,11 +224,14 @@ user-defined code to run in response to interaction
 \section{Features} % (fold)
 \label{sec:features}
 
+In this section, we describe the installation steps and application programming
+interface (API) for \code{nbinteract}.
+
 \subsection{Installation} % (fold)
 \label{sub:installation}
 
 Installing \code{nbinteract} requires Python version 3.4 or higher. To install
-\code{nbinteract}, run the following command in the terminal:
+\code{nbinteract}, run the following command in a terminal shell:
 
 \begin{verbatim}
   pip install nbinteract
@@ -236,8 +246,8 @@ additional commands to enable \code{nbinteract} in the notebook environment:
 \end{verbatim}
 
 After installation, the \code{nbinteract} package is available to import in a
-Python program and a \code{nbinteract} command-line tool is available to use on
-the terminal.
+Python program and a \code{nbinteract} command-line tool is available to use
+in a terminal shell.
 
 % subsection installation (end)
 
@@ -246,7 +256,7 @@ the terminal.
 
 The simplest method to prepare notebooks for conversion using \code{nbinteract}
 is to place the notebooks in a GitHub repository with a \code{requirements.txt}
-file in the root directory. The \code{requirements.txt} file should contain all
+file in the root directory. The \code{requirements.txt} file should list all
 packages required to run the notebooks. These steps will prepare the GitHub
 repository for use on the Binder service, a prerequisite for \code{nbinteract}.
 For additional configuration options, consult the Binder
@@ -311,8 +321,6 @@ generate data as input. For example, the following code generates an
 interactive histogram shown in figure \ref{fig:nbi-hist} where the user can
 change the mean and spread of a normal distribution:
 
-\newpage
-
 \begin{marginfigure}%
   \includegraphics[width=\linewidth]{graphics/nbi-hist.png}
   \caption{The \code{nbinteract} plotting functions create visualizations with
@@ -340,6 +348,47 @@ visualization. The complete plotting API is documented on \code{nbinteract}'s
 website: \url{http://nbinteract.com/}.
 
 % subsection python_api_for_interactive_plotting (end)
+
+\newpage
+
+\subsection{Future Python API for Complex Plots} % (fold)
+\label{sub:future_plotting_api}
+
+As of this writing, \code{nbinteract}'s visualization methods only generate
+plots with a single mark (e.g. a line or a histogram). A forthcoming API will
+enable a declarative one-to-many mapping for widgets to functions and functions
+to plot marks. Although the these methods are still under testing, the API
+itself is largely stable. We include an example below to demonstrate plotting
+two lines that share data from a pair of interactive widgets. The resulting
+chart is shown in figure \ref{fig:nbi-lines}.
+
+\begin{marginfigure}[1cm] %
+  \includegraphics[width=\linewidth]{graphics/nbi-lines.png}
+  \caption{The two line marks in the resulting visualization share data input
+  from the same pair of two widgets.}
+  \label{fig:nbi-lines}
+\end{marginfigure}
+
+\begin{minted}{python}
+import numpy as np
+import nbinteract as nbi
+
+def x_intercept1(x_coord): return [x_coord, x_coord]
+def x_intercept2(x_coord): return [x_coord + 5, x_coord + 5]
+def y_points(y_coord): return [0, y_coord]
+
+nbi.Figure(
+    options = {'xlim': (0, 20), 'ylim': (0, 20)},
+    widgets={'widget_x': (5, 0, 10), 'widget_y': (5, 0, 10)},
+    functions={x_intercept1: ['widget_x'],
+               x_intercept2: ['widget_x'],
+               y_points:     ['widget_y']},
+    marks={'line1': nbi.Line(x_intercept1, y_points),
+           'line2': nbi.Line(x_intercept2, y_points)}
+)
+\end{minted}
+
+% subsection future_plotting_api (end)
 
 % section features (end)
 
@@ -430,13 +479,13 @@ can also be used to create dashboards from Jupyter notebooks by hiding the
 code used to generate widgets. Since Jupyter notebooks converted to HTML are an
 increasingly popular format for online content\sidenote{The first detection of
 gravitational waves and Peter Norvig's pytudes are recent high-profile examples
-of notebooks used as online content formats.}, we've designed \code{nbinteract}
+of notebooks used as online content formats.}, \code{nbinteract} is designed
 to easily fit into existing notebook publishing workflows.
 
 UC Berkeley's upper division data science course Data 100 uses
 \code{nbinteract} to build its online textbook\sidenote{
 \url{https://www.textbook.ds100.org/}}. The textbook is written using Jupyter
-notebooks and receives a few hundred views per day. \code{nbinteract} allows
+notebooks and receives over a hundred views per day. \code{nbinteract} allows
 the authors to include interactive widgets anywhere in the textbook. For
 example, the book uses widgets to display complete views of large data tables
 that would normally require truncation by allowing viewers to scrub through the
@@ -477,7 +526,11 @@ way to minimize code execution time when widgets are manipulated, making
 network latency the most significant overhead for user interaction. On fast
 connections, this latency is typically around 100 milliseconds.
 JavaScript-based interactions, however, typically do not make requests to a
-remote server and thus do not incur network latency overhead.
+remote server and thus do not incur network latency overhead. We are actively
+implementing methods of reducing both startup and interaction
+latency---\code{nbinteract} caches previously-initialized Binder servers on the
+client and avoid unnecessary network requests when performing visualization
+updates.
 
 Interactions that both \code{nbinteract} and JavaScript support are typically
 easier to create in \code{nbinteract} than in JavaScript. Authors fluent in
@@ -493,13 +546,14 @@ Python but not JavaScript and HTML.
 
 Although \code{nbinteract} is not designed to fully replicate the flexibility
 and fidelity of JavaScript, we hope to make several improvements to the library
-in order to increase utility for authors that use Jupyter notebooks.
+to increase utility for authors that use Jupyter notebooks.
 
-We plan to release a more flexible API for creating interactive visualizations
-using \code{nbinteract}. Currently, visualizations are restricted to single
-plots that contain one type of mark (e.g. line, point, or bar). Our future API
-will provide a declarative syntax for connecting multiple widgets, functions,
-and plot elements to create more complex interactive visualizations.
+As previously discussed, we plan to release a more flexible API for creating
+interactive visualizations using \code{nbinteract}. Currently, visualizations
+are restricted to single plots that contain one type of mark (e.g. line, point,
+or bar). Our future API will provide a declarative syntax for connecting
+multiple widgets, functions, and plot elements to create more complex
+interactive visualizations.
 
 Currently, \code{nbinteract} only permits widgets from the \code{ipywidgets}
 and \code{bqplot} libraries. Since there are now many libraries built on top of
@@ -508,13 +562,6 @@ the \code{ipywidgets} library\sidenote{Any of the widget libraries listed at
 specify additional widget libraries when converting notebooks. This improvement
 will allow \code{nbinteract} to support the entire ecosystem of interaction
 frameworks that use \code{ipywidgets}.
-
-We also plan to work with the Binder team to decrease the startup time of
-Jupyter servers on Binder. This improvement would benefit both
-\code{nbinteract} users and any user of the Binder service itself. We are also
-investigating ways to reduce latency after widget initialization, including
-caching previous interaction outputs on the client and batching visualization
-updates together.
 
 % subsection future_work (end)
 
@@ -530,8 +577,6 @@ of Python and Jupyter to allow many more individuals to create and share
 interactive content online.
 
 % section conclusion (end)
-
-\newpage
 
 \printbibliography
 
