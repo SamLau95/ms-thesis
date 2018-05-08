@@ -1,4 +1,6 @@
 \documentclass[nobib]{tufte-handout}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 
 \title{nbinteract: Generate Interactive Web Pages From Jupyter Notebooks}
 
@@ -7,12 +9,6 @@
 %\date{28 March 2010} % without \date command, current date is supplied
 
 %\geometry{showframe} % display margins for debugging page layout
-
-\usepackage[
-  style=numeric,
-  citestyle=numeric
-]{biblatex}
-\addbibresource{thesis.bib}
 
 \usepackage{graphicx} % allow embedded images
   \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
@@ -33,6 +29,14 @@
   urlcolor=blue,
 }
 
+\usepackage{minted}
+
+\usepackage[
+  style=numeric,
+  citestyle=numeric
+]{biblatex}
+\addbibresource{thesis.bib}
+
 % Standardize command font styles and environments
 \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
 \newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
@@ -50,6 +54,11 @@
 
 \maketitle% this prints the handout title, author, and date
 
+\begin{figure*}[h]
+  \includegraphics[width=\linewidth]{graphics/cover.png}
+  \label{fig:cover}
+\end{figure*}
+
 \begin{abstract}
 \noindent
 \code{nbinteract} provides a Python library and a command-line tool to convert
@@ -59,7 +68,8 @@ viewer has Python or Jupyter installed locally. \code{nbinteract}'s built-in
 support for function-driven plotting makes interactive visualizations simpler
 to create by allowing authors to focus on declarative data changes instead of
 callbacks. \code{nbinteract} has use cases for data analysis, visualization,
-and especially education, where it is used for a prominent course textbook.
+and especially education, where it is used for a prominent textbook on data
+science.
 \end{abstract}
 
 \section{Introduction} % (fold)
@@ -72,6 +82,13 @@ data preparation and analysis, they are becoming an increasingly common choice
 for university courses---a survey in 2016 reported that over one hundred
 courses across multiple countries use Jupyter in their course content
 \cite{hamrick_2016_2016}.
+
+\begin{marginfigure}%
+  \includegraphics[width=\linewidth]{graphics/jupyter.png}
+  \caption{Jupyter notebooks combine code, text, and plots in a single
+  document.}
+  \label{fig:jupyter}
+\end{marginfigure}
 
 An increasing number of universities now offer data science courses, many of
 which use Jupyter because of its broad adoption for data analysis workflows in
@@ -88,6 +105,13 @@ notebook environment instead of having to use HTML and JavaScript,
 significantly lowering the time usually needed to create these interfaces
 \cite{_jupyter-widgets/ipywidgets_}. This ease-of-use encourages instructors
 and researchers to create interactive explanations of their work.
+
+\begin{marginfigure}%
+  \includegraphics[width=\linewidth]{graphics/ipywidgets.png}
+  \caption{The \code{ipywidgets} library provides primitives for interaction
+  in Jupyter notebooks.}
+  \label{fig:ipywidgets}
+\end{marginfigure}
 
 Unfortunately, it is difficult to share these interactive notebooks with the
 public. Sharing the notebook file itself retains full interactivity but
@@ -150,6 +174,12 @@ for the general public. It takes a repository of Jupyter notebooks, starts a
 Jupyter frontend and Jupyter kernel, and gives users the ability to run the
 notebook over the internet instead of having on their local machines
 \cite{_binder_}.
+
+\begin{marginfigure}%
+  \includegraphics[width=\linewidth]{graphics/binder.png}
+  \caption{The free \code{Binder} service runs Jupyter servers for public use.}
+  \label{fig:binder}
+\end{marginfigure}
 
 % subsection jupyter_technologies (end)
 
@@ -260,10 +290,10 @@ As a convenience, \code{nbinteract} also provides a Python interface to convert
 notebooks to HTML files. To use Python to convert the \code{hello.ipynb}
 notebook mentioned above, run:
 
-\begin{verbatim}
+\begin{minted}{python}
   import nbinteract as nbi
   nbi.publish('SamLau95/nbinteract-image/master', 'hello.ipynb')
-\end{verbatim}
+\end{minted}
 
 This Python code performs the same conversion as the shell command above.
 
@@ -277,10 +307,19 @@ generating visualizations controlled by interactive widgets. While most
 plotting methods in other visualization libraries (e.g. \code{matplotlib}) take
 data as input, the plotting methods in \code{nbinteract} take in functions that
 generate data as input. For example, the following code generates an
-interactive histogram where the user can change the mean and spread of a normal
-distribution:
+interactive histogram shown in figure \ref{fig:nbi-hist} where the user can
+change the mean and spread of a normal distribution:
 
-\begin{verbatim}
+\newpage
+
+\begin{marginfigure}%
+  \includegraphics[width=\linewidth]{graphics/nbi-hist.png}
+  \caption{The \code{nbinteract} plotting functions create visualizations with
+  interactive widgets. Here, two different histogram states are shown.}
+  \label{fig:nbi-hist}
+\end{marginfigure}
+
+\begin{minted}{python}
 import numpy as np
 import nbinteract as nbi
 
@@ -292,12 +331,12 @@ def normal(mean, sd):
 # Whenever the user interacts with the sliders, the
 # `normal` function is called and the returned data are plotted.
 nbi.hist(normal, mean=(0, 10), sd=(0, 2.0), options=options)
-\end{verbatim}
+\end{minted}
 
 The plotting methods in \code{nbinteract} take in functions as input and use
 the function signature to generate widgets placed above the resulting
-visualization\sidenote{The complete API is documented on \code{nbinteract}'s
-website: \url{http://nbinteract.com/}}.
+visualization. The complete plotting API is documented on \code{nbinteract}'s
+website: \url{http://nbinteract.com/}.
 
 % subsection python_api_for_interactive_plotting (end)
 
@@ -399,10 +438,17 @@ UC Berkeley's upper division data science course Data 100 uses
 notebooks and receives a few hundred views per day. \code{nbinteract} allows
 the authors to include interactive widgets anywhere in the textbook. For
 example, the book uses widgets to display complete views of large data tables
-that would normally require truncation by allowing viewers to scrub through
-the rows and columns of the data table. The book also allows viewers to
-interactively change parameters and data of statistical models and displays
-updated visualizations in response.
+that would normally require truncation by allowing viewers to scrub through the
+rows and columns of the data table as shown in figure \ref{fig:df-interact}.
+The book also allows viewers to interactively change parameters and data of
+statistical models and displays updated visualizations in response.
+
+\begin{marginfigure}%
+  \includegraphics[width=\linewidth]{graphics/df-interact.png}
+  \caption{Use of \code{nbinteract} to embed large tables in the Data 100
+  Textbook.}
+  \label{fig:df-interact}
+\end{marginfigure}
 
 % subsection use_cases (end)
 
