@@ -10,6 +10,13 @@
 
 %\geometry{showframe} % display margins for debugging page layout
 
+\usepackage[
+  backend=bibtex,
+  style=numeric,
+  citestyle=numeric
+]{biblatex}
+\addbibresource{thesis.bib}
+
 \usepackage{graphicx} % allow embedded images
   \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
   \graphicspath{{graphics/}} % set of paths to search for images
@@ -30,12 +37,6 @@
 }
 
 \usepackage{minted}
-
-\usepackage[
-  style=numeric,
-  citestyle=numeric
-]{biblatex}
-\addbibresource{thesis.bib}
 
 % Standardize command font styles and environments
 \newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
